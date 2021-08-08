@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Result, ValidationError, validationResult } from "express-validator";
 import mongoose from "mongoose";
+import { nextTick } from "process";
 const Portfolios = require("../models/portfolio");
 const Portfolio = mongoose.model("Portfolios");
 import IPortfolio from "../interfaces/portfolio";
@@ -67,19 +68,19 @@ export const getPortfolioById = async (req: Request, res: Response) => {
  * @METHOD `POST`
  * @PATH `/api/v1/portfolios`
  */
-export const createPortfolio = async (req: any, res: Response) => {
+export const createPortfolio = async (req: any, res: Response, next:NextFunction) => {
   const errors: Result<ValidationError> = await validationResult(req);
   if (!errors.isEmpty()) {
     const firstError: string = await errors.array().map((err) => err.msg)[0];
     return res.status(422).json({ msg: firstError });
   } else {
     try {
-      const portfolioData = req.body;
+      let portfolioData = req.body;
+      portfolioData.userId = req.user.sub;
+
       const portfolio: any = new Portfolio(portfolioData);
-      portfolio.userId = 1;
-      await portfolio.save().then(async (newPortfolio: IPortfolio) => {
-        return res.status(200).json(newPortfolio);
-      });
+      const newPortfolio = await portfolio.save()
+      return res.json(newPortfolio);
     } catch (error) {
       return res.status(500).json({
         msg: error.message,
