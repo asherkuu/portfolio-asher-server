@@ -21,14 +21,15 @@ router.post(
   // checkJwt,
   // validCreatePortfolio,
   // checkRole("admin"),
+  // imageUpload.single("image"),
   createPortfolio
 ); // 포폴 등록
 router.post(
   "/portfolios/upload",
+  checkJwt,
+  checkRole("admin"),
   imageUpload.single("image"),
-  async function (req: any, res: any, next: NextFunction) {
-    return res.status(200).json(req.file);
-  }
+  createPortfolio
 ); // 이미지 업로드 테스트
 router.patch(PTF + "/:id", checkJwt, checkRole("admin"), updatePortfolio); // 포폴 수정
 router.delete(PTF + "/:id", checkJwt, checkRole("admin"), deletePortfolio); // 포폴 삭제

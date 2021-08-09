@@ -79,14 +79,15 @@ export const createPortfolio = async (
     return res.status(422).json({ msg: firstError });
   } else {
     try {
-      // let portfolioData = req.body;
-      // portfolioData.userId = req.user.sub;
-
-      // const portfolio: any = new Portfolio(portfolioData);
-      // const newPortfolio = await portfolio.save();
-      // return res.json(newPortfolio);
-      console.log(req);
-      return res.send("qwe");
+      console.log(req)
+      let portfolioData = req.body;
+      portfolioData.userId = req.user.sub;
+      portfolioData.img= req.file;
+      const portfolio: any = new Portfolio(portfolioData);
+      portfolio.startDate = new Date(req.body.startDate)
+      portfolio.endDate = new Date(req.body.endDate)
+      const newPortfolio = await portfolio.save();
+      return res.status(200).json(newPortfolio);
     } catch (error) {
       return res.status(500).json({
         msg: error.message,
