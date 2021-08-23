@@ -18,11 +18,11 @@ export const getPortfolios = async (req: Request, res: Response) => {
     return res.status(422).json({ msg: firstError });
   } else {
     try {
-      await Portfolio.find({}).exec(
-        async (err: Object, portfolios: IPortfolio[]) => {
+      await Portfolio.find({})
+        .sort({ createdAt: -1 })
+        .exec(async (err: Object, portfolios: IPortfolio[]) => {
           return res.status(200).json(portfolios);
-        }
-      );
+        });
     } catch (error) {
       return res.status(500).json({
         msg: error.message,
@@ -79,13 +79,13 @@ export const createPortfolio = async (
     return res.status(422).json({ msg: firstError });
   } else {
     try {
-      console.log(req)
       let portfolioData = req.body;
       portfolioData.userId = req.user.sub;
-      portfolioData.img= req.file;
+      portfolioData.img = req.file;
+
       const portfolio: any = new Portfolio(portfolioData);
-      portfolio.startDate = new Date(req.body.startDate)
-      portfolio.endDate = new Date(req.body.endDate)
+      portfolio.startDate = new Date(req.body.startDate);
+      portfolio.endDate = new Date(req.body.endDate);
       const newPortfolio = await portfolio.save();
       return res.status(200).json(newPortfolio);
     } catch (error) {
