@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from "express";
+import { config } from "dotenv";
+import { NextFunction, request, Request, Response } from "express";
 import jwt from "express-jwt";
 import jwksRsa from "jwks-rsa";
 
@@ -29,3 +30,24 @@ export const checkRole =
         .status(401)
         .send("You are not authorized to access this resoucres !");
   };
+
+// export const getAccessToken = (callback) => {
+//   const options = {
+//     method: "POST",
+//     headers: {'content-type': 'application/json'},
+//     from: {
+//       grant_type: 'client-credentials',
+//       client_id: config.AUTH0_CLIENT_ID,
+//       client_secret: config.AUTH0_CLIENT_SECRET,
+//       audience: config.AUTH-_AUDIENCE
+//     }
+//   }
+//   return new Promise((resolve, reject) => {
+//     request(options, (error, res,body) => {
+//       if(error){
+//         return reject(new Error(error))
+//       }
+//       resolve(body ? JSON.parse(body) : '')
+//     })
+//   })
+// }
